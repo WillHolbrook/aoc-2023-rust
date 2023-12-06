@@ -5,21 +5,22 @@ fn main() {
     let sample_input2 = include_str!("../data/sample2.txt");
     let input = include_str!("../data/input.txt");
 
-    part1(sample_input1);
+    assert_eq!(part1(sample_input1), 142);
     part1(input);
 
-    part2(sample_input2);
+    assert_eq!(part2(sample_input2), 281);
     part2(input);
 }
 
-fn part1(input: &str) {
-    let lines : Vec<&str> = input.lines().collect();
+fn part1(input: &str) -> u32 {
+    let lines: Vec<_> = input.lines().collect();
     let mut total = 0;
     for line in lines {
         total += left_most_number_numeric(line) * 10;
         total += right_most_number_numeric(line);
     }
     println!("{}", total);
+    return total;
 }
 
 fn left_most_number_numeric(line: &str) -> u32 {
@@ -35,47 +36,40 @@ fn right_most_number_numeric(line: &str) -> u32 {
     return left_most_number_numeric(line.chars().rev().collect::<String>().as_str());
 }
 
-fn part2(input: &str) {
-    let mut written_number_to_value: HashMap<&str, u32> = HashMap::new();
-    // written_number_to_value.insert("zero", 0);
-    written_number_to_value.insert("one", 1);
-    written_number_to_value.insert("two", 2);
-    written_number_to_value.insert("three", 3);
-    written_number_to_value.insert("four", 4);
-    written_number_to_value.insert("five", 5);
-    written_number_to_value.insert("six", 6);
-    written_number_to_value.insert("seven", 7);
-    written_number_to_value.insert("eight", 8);
-    written_number_to_value.insert("nine", 9);
 
-    let written_number_to_value = &written_number_to_value;
+fn part2(input: &str) -> u32{
+    let written_number_to_value = gen_dict();
 
     let lines : Vec<&str> = input.lines().collect();
     let mut total = 0;
     for line in lines {
-        total += left_most_number(line, written_number_to_value) * 10;
-        total += right_most_number(line, written_number_to_value);
+        total += left_most_number(line, &written_number_to_value) * 10;
+        total += right_most_number(line, &written_number_to_value);
     }
     println!("{}", total);
+    return total;
+}
+
+fn gen_dict() -> HashMap<&'static str, u32> {
+    let mut written_number_to_value: HashMap<&str, u32> = HashMap::new();
+        let tuples = [("one", 1),("two", 2),("three", 3),("four", 4),("five", 5),("six", 6),("seven", 7),("eight", 8),("nine", 9)];
+
+    for (k, v) in tuples {
+        written_number_to_value.insert(k, v);
+    }
+    written_number_to_value
 }
 
 fn left_most_number(line: &str, written_number_to_value: &HashMap<&str, u32>) -> u32 {
-    for (i, letter) in line.char_indices() {
-        if letter.is_numeric() {
-            return letter.to_digit(10).unwrap();
-        } else {
-            for (number, value) in written_number_to_value {
-                if line[i..].starts_with(number) {
-                    return *value;
-                }
-            }
-        }
-    }
-    panic!()
+    number_helper(line, line.char_indices(), written_number_to_value)
 }
 
 fn right_most_number(line: &str, written_number_to_value: &HashMap<&str, u32>) -> u32 {
-    for (i, letter) in line.char_indices().rev() {
+    number_helper(line, line.char_indices().rev(), written_number_to_value)
+}
+
+fn number_helper(line: &str, iterator: impl Iterator<Item = (usize, char)>, written_number_to_value: &HashMap<&str, u32>) -> u32 {
+    for (i, letter) in iterator {
         if letter.is_numeric() {
             return letter.to_digit(10).unwrap();
         } else {
@@ -89,22 +83,22 @@ fn right_most_number(line: &str, written_number_to_value: &HashMap<&str, u32>) -
     panic!()
 }
 
-// fn number_helper(line: &str, left_most: bool, written_number_to_value: &HashMap<&str, u32>) -> u32 {
-//     let iterator: std::iter::Rev<std::str::CharIndices<'_>>= match left_most {
-//         true => line.char_indices().into_iter(),
-//         false => line.char_indices().rev().into_iter(),
-//     };
-//     let a = line.char_indices().rev().into_iter();
-//     for (i, letter) in iterator {
-//         if letter.is_numeric() {
-//             return letter.to_digit(10).unwrap();
-//         } else {
-//             for (number, value) in written_number_to_value {
-//                 if line[i..].starts_with(number) {
-//                     return *value;
-//                 }
-//             }
-//         }
-//     }
-//     panic!()
-// }
+fn _number_helper_bool2(line: &str, left_most: bool, written_number_to_value: &HashMap<&str, u32>) -> u32 {
+    let iterator: Box<dyn Iterator<Item = _>> = match left_most {
+        true => Box::new(line.char_indices().into_iter()),
+        false => Box::new(line.char_indices().rev().into_iter())
+    };
+
+    for (i, letter) in iterator {
+        if letter.is_numeric() {
+            return letter.to_digit(10).unwrap();
+        } else {
+            for (number, value) in written_number_to_value {
+                if line[i..].starts_with(number) {
+                    return *value;
+                }
+            }
+        }
+    }
+    panic!()
+}
