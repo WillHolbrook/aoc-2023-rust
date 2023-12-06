@@ -1,6 +1,6 @@
-use std::{collections::HashMap, cmp::max};
+use std::{cmp::max, collections::HashMap};
 
-fn main() {    
+fn main() {
     let sample_input1 = include_str!("../data/sample1.txt");
     let input = include_str!("../data/input.txt");
 
@@ -13,7 +13,7 @@ fn main() {
 
 fn gen_limit_dict() -> HashMap<&'static str, u32> {
     let mut written_number_to_value: HashMap<&str, u32> = HashMap::new();
-        let tuples = [("red", 12), ("green", 13), ("blue", 14)];
+    let tuples = [("red", 12), ("green", 13), ("blue", 14)];
 
     for (k, v) in tuples {
         written_number_to_value.insert(k, v);
@@ -28,12 +28,14 @@ fn part1(input: &str) -> u32 {
 
     let games: Vec<_> = input.lines().collect();
     for game in games {
-        let split = game.split(":").collect::<Vec<_>>();
+        let split = game.split(':').collect::<Vec<_>>();
         let mut valid = true;
-        let id = split[0].split(" ").collect::<Vec<_>>()[1].parse::<u32>().unwrap();
+        let id = split[0].split(' ').collect::<Vec<_>>()[1]
+            .parse::<u32>()
+            .unwrap();
 
-        for dice_num in split[1].split(|c| c == ',' || c ==';') {
-            let split = dice_num.split(" ").collect::<Vec<_>>();
+        for dice_num in split[1].split(|c| c == ',' || c == ';') {
+            let split = dice_num.split(' ').collect::<Vec<_>>();
 
             let colour = split[2];
             let value = split[1].parse::<u32>().unwrap();
@@ -47,14 +49,14 @@ fn part1(input: &str) -> u32 {
         if valid {
             total += id;
         }
-    };
+    }
     println!("{}", total);
-    return total;
+    total
 }
 
 fn gen_max_dict() -> HashMap<&'static str, u32> {
     let mut written_number_to_value: HashMap<&str, u32> = HashMap::new();
-        let tuples = [("red", 0), ("green", 0), ("blue", 0)];
+    let tuples = [("red", 0), ("green", 0), ("blue", 0)];
 
     for (k, v) in tuples {
         written_number_to_value.insert(k, v);
@@ -69,10 +71,10 @@ fn part2(input: &str) -> u32 {
     let games: Vec<_> = input.lines().collect();
     for game in games {
         let mut my_max = max_dict.clone();
-        let split = game.split(":").collect::<Vec<_>>();
+        let split = game.split(':').collect::<Vec<_>>();
 
-        for dice_num in split[1].split(|c| c == ',' || c ==';') {
-            let split = dice_num.split(" ").collect::<Vec<_>>();
+        for dice_num in split[1].split(|c| c == ',' || c == ';') {
+            let split = dice_num.split(' ').collect::<Vec<_>>();
 
             let colour = split[2];
             let value = split[1].parse::<u32>().unwrap();
@@ -85,8 +87,7 @@ fn part2(input: &str) -> u32 {
             game_total *= val;
         }
         total += game_total;
-
-    };
+    }
     println!("{}", total);
-    return total;
+    total
 }

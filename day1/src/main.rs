@@ -20,7 +20,7 @@ fn part1(input: &str) -> u32 {
         total += right_most_number_numeric(line);
     }
     println!("{}", total);
-    return total;
+    total
 }
 
 fn left_most_number_numeric(line: &str) -> u32 {
@@ -36,23 +36,32 @@ fn right_most_number_numeric(line: &str) -> u32 {
     return left_most_number_numeric(line.chars().rev().collect::<String>().as_str());
 }
 
-
-fn part2(input: &str) -> u32{
+fn part2(input: &str) -> u32 {
     let written_number_to_value = gen_dict();
 
-    let lines : Vec<&str> = input.lines().collect();
+    let lines: Vec<&str> = input.lines().collect();
     let mut total = 0;
     for line in lines {
         total += left_most_number(line, &written_number_to_value) * 10;
         total += right_most_number(line, &written_number_to_value);
     }
     println!("{}", total);
-    return total;
+    total
 }
 
 fn gen_dict() -> HashMap<&'static str, u32> {
     let mut written_number_to_value: HashMap<&str, u32> = HashMap::new();
-        let tuples = [("one", 1),("two", 2),("three", 3),("four", 4),("five", 5),("six", 6),("seven", 7),("eight", 8),("nine", 9)];
+    let tuples = [
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ];
 
     for (k, v) in tuples {
         written_number_to_value.insert(k, v);
@@ -68,7 +77,11 @@ fn right_most_number(line: &str, written_number_to_value: &HashMap<&str, u32>) -
     number_helper(line, line.char_indices().rev(), written_number_to_value)
 }
 
-fn number_helper(line: &str, iterator: impl Iterator<Item = (usize, char)>, written_number_to_value: &HashMap<&str, u32>) -> u32 {
+fn number_helper(
+    line: &str,
+    iterator: impl Iterator<Item = (usize, char)>,
+    written_number_to_value: &HashMap<&str, u32>,
+) -> u32 {
     for (i, letter) in iterator {
         if letter.is_numeric() {
             return letter.to_digit(10).unwrap();
@@ -83,10 +96,14 @@ fn number_helper(line: &str, iterator: impl Iterator<Item = (usize, char)>, writ
     panic!()
 }
 
-fn _number_helper_bool2(line: &str, left_most: bool, written_number_to_value: &HashMap<&str, u32>) -> u32 {
+fn _number_helper_bool2(
+    line: &str,
+    left_most: bool,
+    written_number_to_value: &HashMap<&str, u32>,
+) -> u32 {
     let iterator: Box<dyn Iterator<Item = _>> = match left_most {
-        true => Box::new(line.char_indices().into_iter()),
-        false => Box::new(line.char_indices().rev().into_iter())
+        true => Box::new(line.char_indices()),
+        false => Box::new(line.char_indices().rev()),
     };
 
     for (i, letter) in iterator {
