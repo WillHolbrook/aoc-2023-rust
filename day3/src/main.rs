@@ -55,8 +55,8 @@ fn generate_neighboring_symbol_func(
 
     move |(i, j): (usize, usize)| -> bool {
         for test_row in char_grid.iter().take(min(i + 1, height - 1) + 1).skip(max(i.saturating_sub(1), 0)) {
-            for my_j in max(j.saturating_sub(1), 0)..=min(j + 1, width - 1) {
-                if !test_row[my_j].is_numeric() && test_row[my_j] != '.' {
+            for test_char in test_row.iter().take(min(j + 1, width - 1) + 1).skip(max(j.saturating_sub(1), 0)) {
+                if !test_char.is_numeric() && test_char != &'.' {
                     return true;
                 }
             }
@@ -129,9 +129,9 @@ fn generate_neighboring_gear_func(
     move |(i, j): (usize, usize)| -> Vec<(usize, usize)> {
         let mut star_locations = Vec::new();
 
-        for (my_i, row) in char_grid.iter().enumerate().take(min(i + 1, height - 1) + 1).skip(max(i.saturating_sub(1), 0)) {
-            for my_j in max(j.saturating_sub(1), 0)..=min(j + 1, width - 1) {
-                if row[my_j] == '*' {
+        for (my_i, test_row) in char_grid.iter().enumerate().take(min(i + 1, height - 1) + 1).skip(max(i.saturating_sub(1), 0)) {
+            for (my_j, test_char) in test_row.iter().enumerate().take(min(j + 1, width - 1) + 1).skip(max(j.saturating_sub(1), 0)) {
+                if test_char == &'*' {
                     star_locations.push((my_i, my_j));
                 }
             }
